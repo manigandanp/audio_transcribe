@@ -1,6 +1,6 @@
 clearml
 datasets
-faster-whisper @ https://github.com/SYSTRAN/faster-whisper/archive/refs/heads/master.tar.gz
+faster-whisper@https://github.com/SYSTRAN/faster-whisper/archive/refs/heads/master.tar.gz
 pandas
 soundfile
 librosa

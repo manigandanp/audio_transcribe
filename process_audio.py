@@ -17,10 +17,11 @@ def transcribe(audio_array, language='ta', chunk_length=10):
 
 def process_audio(project_name, hf_dataset_name, hf_config_name, audio_index, audio_name, queue_name = "process_audio"):
     # Initialize ClearML Task
-    task = Task.init(project_name=project_name, task_name=f"Process Audio - {audio_name}-{audio_index}")
-    task.add_requirements("requirements.txt")
-    task.execute_remotely(queue_name)
-    logger = task.get_logger()
+    # task = Task.init(project_name=project_name, task_name=f"Process Audio - {audio_name}-{audio_index}")
+    # task.add_requirements("requirements.txt")
+    # task.execute_remotely(queue_name)
+    # logger = task.get_logger()
+    task = Task.current_task()
     token = os.environ.get("HF_TOKEN")
 
     # Load the specific audio file from Hugging Face dataset
