@@ -1,4 +1,4 @@
-from clearml import Task, TaskTypes, TaskQueryParameters
+from clearml import Task, TaskTypes
 
 
 project_name = "Test/AudioProcessing/template"
@@ -13,9 +13,10 @@ existing_tasks = Task.get_tasks(
 )
 
 for existing_task in existing_tasks:
-    if not existing_task.get_archived():
-        print(f"Archiving existing task: {existing_task.id}")
-        existing_task.archive()
+    if not existing_task.get_system_tags() or 'archived' not in existing_task.get_system_tags():
+      new_name = f"{existing_task.name}_old_{existing_task.id}"
+      existing_task.rename(new_name)
+      print(f"Existing task renamed to: {new_name}")
 
 
 audio_process_task = Task.create(
