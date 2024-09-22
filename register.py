@@ -17,9 +17,12 @@ for existing_task in existing_tasks:
         not existing_task.get_system_tags()
         or "archived" not in existing_task.get_system_tags()
     ):
-        new_name = f"{existing_task.name}_old_{existing_task.id}"
-        existing_task.rename(new_name)
-        print(f"Existing task renamed to: {new_name}")
+        # new_name = f"{existing_task.name}_old_{existing_task.id}"
+        # existing_task.rename(new_name)
+        existing_task.set_archived(True)
+        print(
+            f"Existing task {existing_task.name} id {existing_task.id} has been archived"
+        )
 
 
 audio_process_task = Task.create(
