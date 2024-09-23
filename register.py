@@ -41,4 +41,16 @@ audio_process_task = Task.create(
     branch="main",
 )
 
-print(audio_process_task)
+
+final_task = Task.create(
+    project_name=project_name,
+    task_name="final_step",
+    task_type=TaskTypes.data_processing,
+    script="final.py",
+    branch="main",
+    argparse_args=[
+        ("parents", "parents_from_base"),
+    ],
+)
+
+print(audio_process_task, final_task)

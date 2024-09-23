@@ -42,17 +42,17 @@ for audio_index in range(len(dataset)):
         clone_base_task=True
     )
 
-# pipe.add_step(
-#     name="final_step",
-#     base_task_name="final_step",
-#     base_task_project=f"{project_name}/template",
-#     execution_queue="audio_process",
-#     parameter_override={
-#         "Args/project_name": project_name,
-#         "Args/hf_dataset_name": hf_dataset_name,
-#         "Args/hf_config_name": hf_config_name,
-#     },
-# )
+pipe.add_step(
+    name="final_step",
+    base_task_name="final_step",
+    base_task_project=f"{project_name}/template",
+    execution_queue="audio_process",
+    parameter_override={
+        "Args/project_name": project_name,
+        "Args/hf_dataset_name": hf_dataset_name,
+        "Args/hf_config_name": hf_config_name,
+    },
+)
 
 
 pipe.start(queue="default")
