@@ -6,8 +6,7 @@ project_name = "Test/AudioProcessing"
 
 
 pipe = PipelineController(
-    project=project_name, name="audio_transcribe_pipeline", version="0.1",
-    repo=""
+    project=project_name, name="audio_transcribe_pipeline", version="0.1", repo=""
 )
 
 pipe.set_default_execution_queue("default")
@@ -39,7 +38,7 @@ for audio_index in range(len(dataset)):
             "Args/audio_index": str(audio_index),
             "Args/audio_name": "random_audio_name",
         },
-        clone_base_task=True
+        clone_base_task=True,
     )
 
 pipe.add_step(
@@ -48,9 +47,7 @@ pipe.add_step(
     base_task_project=f"{project_name}/template",
     execution_queue="audio_process",
     parameter_override={
-        "Args/project_name": project_name,
-        "Args/hf_dataset_name": hf_dataset_name,
-        "Args/hf_config_name": hf_config_name,
+        "Args/parents": project_name,
     },
 )
 
