@@ -6,7 +6,11 @@ project_name = "Test/AudioProcessing"
 
 
 pipe = PipelineController(
-    project=project_name, name="audio_transcribe_pipeline", version="0.1", repo=""
+    project=project_name,
+    name="audio_transcribe_pipeline",
+    version="0.1",
+    repo="https://github.com/manigandanp/audio_transcribe.git",
+    repo_branch="main",
 )
 
 pipe.set_default_execution_queue("default")
@@ -52,4 +56,4 @@ pipe.add_step(
 )
 
 
-pipe.start(queue="default")
+pipe.start()
