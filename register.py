@@ -52,7 +52,6 @@ final_task = Task.create(
     argparse_args=[
         ("parents", "parents_from_base"),
     ],
-    branch="main",
 )
 
 print(audio_process_task, final_task)
