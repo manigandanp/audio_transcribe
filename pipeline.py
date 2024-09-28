@@ -29,9 +29,13 @@ hf_config_name = pipe.get_parameters().get("hf_config_name")
 
 dataset = get_dataset(hf_dataset_name, hf_config_name, token)
 
+audio_process_steps = []
+
 for audio_index in range(len(dataset)):
+    name = f"process_audio-{audio_index}"
+    audio_process_steps.append(name)
     pipe.add_step(
-        name=f"process_audio-{audio_index}",
+        name=name,
         base_task_name="process_audio",
         base_task_project=f"{project_name}/template",
         execution_queue="audio_process",
@@ -53,6 +57,7 @@ pipe.add_step(
     parameter_override={
         "Args/parents": project_name,
     },
+    parents = audio_process_steps
 )
 
 
