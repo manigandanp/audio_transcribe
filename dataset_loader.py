@@ -16,13 +16,17 @@ class DatasetLoader:
         self.task = Task.get_task(task_id=input_task_id)
 
     def upload_to_clearml(self):
-        ds_with_config = load_dataset(
-            self.hf_dataset_name, self.hf_config_name, split="train", token=self.token
+
+        dataset = (
+            load_dataset(
+                self.hf_dataset_name,
+                self.hf_config_name,
+                split="train",
+                token=self.token,
+            )
+            if self.hf_config_name
+            else load_dataset(self.hf_dataset_name, split="train", token=self.token)
         )
-        ds_without_config = load_dataset(
-            self.hf_dataset_name, split="train", token=self.token
-        )
-        dataset = ds_with_config if self.hf_config_name else ds_without_config
         for item in dataset:
             filename = item["filename"]
             audio_file = item["audio"]
@@ -33,16 +37,16 @@ class DatasetLoader:
 
 if __name__ == "__main__":
     task: Task = Task.current_task()
-    task_parameters = task.get_parameters_as_dict()['General']
+    task_parameters = task.get_parameters_as_dict()["General"]
     input_task_id = task_parameters.get("input_task_id")
     hf_dataset_name = task_parameters.get("hf_dataset_name")
     hf_config_name = task_parameters.get("hf_config_name")
     print(f"Input Task ID: {input_task_id}", hf_dataset_name, hf_config_name)
     loader = DatasetLoader(input_task_id, hf_dataset_name, hf_config_name)
     loader.upload_to_clearml()
-    
+
     task.close()
-  
+
     # dataset_loader = DatasetLoader(
     #     hf_dataset_name="mastermani305/ps-raw",
     #     clearml_project="Test/dev/Audio Transcribe",
