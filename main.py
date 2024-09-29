@@ -6,10 +6,10 @@ def main():
     base_project_name = config.base_project_name  # "Test/Audio Transcription"
     dataset_download_queue_name = "cpu_worker"
 
-    input_artifacts_task = Task.init(
+    input_artifacts_task = Task.create(
         project_name=base_project_name, task_name=config.input_artifacts_task_name
     )
-    output_artifacts_task = Task.init(
+    output_artifacts_task = Task.create(
         project_name=base_project_name, task_name=config.output_artifacts_task_name
     )
 
@@ -28,6 +28,7 @@ def main():
     dataset_download_task.wait_for_status(Task.TaskStatusEnum.completed)
     print("completed downloading from huggingface and uploading to clearml")
     print(input_artifacts_task.artifacts)
+    dataset_download_task.close()
 
     pipe = PipelineController(
         name="audio_transcription_pipeline",
