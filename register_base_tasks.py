@@ -2,6 +2,25 @@ from clearml import Task, TaskTypes
 
 
 def register_base_task(project_name, task_name, script_path, task_type):
+    
+    existing_tasks = Task.get_tasks(
+        project_name=project_name,
+        task_name=task_name,
+        task_filter=dict(
+            system_tags=["-archived"],
+        ),
+    )
+    # Archiving exising task
+    for existing_task in existing_tasks:
+        if (
+            not existing_task.get_system_tags()
+            or "archived" not in existing_task.get_system_tags()
+        ):
+            existing_task.set_archived(True)
+            print(
+                f"Existing task {existing_task.name} id {existing_task.id} has been archived"
+            )
+    # Registering
     task = Task.create(
         project_name=project_name,
         task_name=task_name,
