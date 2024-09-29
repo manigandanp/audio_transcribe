@@ -33,12 +33,13 @@ class DatasetLoader:
 
 if __name__ == "__main__":
     task: Task = Task.current_task()
-    print(task.id)
-    print(task.get_parameters())
-    print(task.get_parameters_as_dict())
-    input_task_id = task.get_parameter("input_task_id")
-    hf_output_dataset_name = task.get_parameter("hf_output_dataset_name")
-    hf_config_name = task.get_parameter("hf_config_name")
+    # print(task.id)
+    # print(task.get_parameters())
+    # print(task.get_parameters_as_dict())
+    task_parameters = task.get_parameters_as_dict()['General']
+    input_task_id = task_parameters.get("input_task_id")
+    hf_output_dataset_name = task_parameters("hf_output_dataset_name")
+    hf_config_name = task_parameters("hf_config_name")
     print(f"Input Task ID: {input_task_id}", hf_output_dataset_name, hf_config_name)
     loader = DatasetLoader(input_task_id, hf_output_dataset_name, hf_config_name)
     loader.upload_to_clearml()
