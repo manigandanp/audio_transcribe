@@ -22,13 +22,16 @@ def main():
         name="dataset_download_task",
         project=Task.get_project_id(base_project_name, False),
     )
-    dataset_download_task.set_parameters(
-        {
-            "hf_dataset_name": "mastermani305/ps-raw",
-            "hf_config_name": "ps-2-2-sample",
-            "input_task_id": input_artifacts_task.id,
-        }
-    )
+    dataset_download_task.set_parameter("hf_dataset_name", "mastermani305/ps-raw")
+    dataset_download_task.set_parameter("hf_config_name", "ps-2-2-sample")
+    dataset_download_task.set_parameter("input_task_id", input_artifacts_task.id)
+    # dataset_download_task.set_parameters(
+    #     {
+    #         "hf_dataset_name": "mastermani305/ps-raw",
+    #         "hf_config_name": "ps-2-2-sample",
+    #         "input_task_id": input_artifacts_task.id,
+    #     }
+    # )
     Task.enqueue(dataset_download_task, queue_name=dataset_download_queue_name)
     dataset_download_task.wait_for_status([Task.TaskStatusEnum.completed])
     print("completed downloading from huggingface and uploading to clearml")
