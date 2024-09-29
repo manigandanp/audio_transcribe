@@ -1,0 +1,6 @@
+base_project_name="Test/Audio Transcription"
+download_dataset_base_task_name="download_dataset_base_task"
+transcribe_base_task_name="transcribe_base_task"
+upload_dataset_base_task_name="upload_dataset_base_task"
+input_artifacts_task_name="input_artifacts"
+output_artifacts_task_name="output_artifacts"
