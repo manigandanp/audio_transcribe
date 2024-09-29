@@ -13,7 +13,6 @@ class DatasetUploader:
         hf_config_name,
         is_private_dataset,
     ):
-        print("initilizing...")
         self.output_artifacts_task = Task.get_task(task_id=output_artifacts_task_id)
         self.hf_output_dataset_name = hf_output_dataset_name
         self.output_dir = "final_output"
@@ -43,7 +42,7 @@ class DatasetUploader:
         merged_metadata.to_csv(merged_metadata_path, index=False)
 
         # Update paths in merged metadata
-        merged_metadata["audio"] = merged_metadata["chunk_name"].apply(
+        merged_metadata["file_name"] = merged_metadata["chunk_name"].apply(
             lambda x: os.path.join("wavs", x)
         )
 
@@ -64,7 +63,7 @@ class DatasetUploader:
 
     def create_and_upload_hf_dataset(self, metadata):
         # Save the updated metadata CSV
-        updated_metadata_path = os.path.join(self.output_dir, "dataset_metadata.csv")
+        updated_metadata_path = os.path.join(self.output_dir, "metadata.csv")
         metadata.to_csv(updated_metadata_path, index=False)
         dataset = load_dataset("audiofolder", data_dir=self.output_dir, split="train")
 
@@ -83,28 +82,9 @@ if __name__ == "__main__":
     hf_output_dataset_name = task_parameters.get("hf_output_dataset_name")
     hf_config_name = task_parameters.get("hf_config_name")
     is_private_dataset = task_parameters.get("is_private_dataset")
-    print(
-        "Task parameters:",
-        output_task_id,
-        hf_output_dataset_name,
-        hf_config_name,
-        is_private_dataset,
-    )
+  
     uploader = DatasetUploader(
         output_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset
     )
     uploader.upload()
-    print("closing..")
     task.close()
-
-    # task = Task.init(project_name="Test/Audio Transcription", task_name="upload_dataset")
-    # Task.enqueue(task=task, queue_name="cpu_worker")
-    # output_task_id = '68bfcd56cc8a40108ce65afd741fd93b'
-    # hf_output_dataset_name = 'mastermani305/ps-transcribed'
-    # hf_config_name = 'ps-2-2-sample'
-    # is_private_dataset = True
-
-    # uploader = DatasetUploader(output_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset)
-    # uploader.upload()
-
-    # task.close()
