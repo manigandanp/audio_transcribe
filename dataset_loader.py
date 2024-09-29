@@ -32,7 +32,10 @@ class DatasetLoader:
 
 
 if __name__ == "__main__":
-    task = Task.current_task()
+    task: Task = Task.current_task()
+    print(task.id)
+    print(task.get_parameters())
+    print(task.get_parameters_as_dict())
     input_task_id = task.get_parameter("input_task_id")
     hf_output_dataset_name = task.get_parameter("hf_output_dataset_name")
     hf_config_name = task.get_parameter("hf_config_name")

@@ -7,15 +7,16 @@ def main():
     dataset_download_queue_name = "cpu_worker"
     project_template = f"{base_project_name}/template"
     input_artifacts_task = Task.get_task(
-        project_name=project_template, task_name=config.input_artifacts_task_name
+        project_name=project_template, task_name=config.input_artifacts_task_name, allow_archived=False
     )
     output_artifacts_task = Task.get_task(
-        project_name=project_template, task_name=config.output_artifacts_task_name
+        project_name=project_template, task_name=config.output_artifacts_task_name, allow_archived=False
     )
 
     dataset_download_base_task = Task.get_task(
         project_name=project_template,
         task_name=config.download_dataset_base_task_name,
+        allow_archived=False
     )
     dataset_download_task = Task.clone(
         dataset_download_base_task,
@@ -25,6 +26,7 @@ def main():
     dataset_download_task.set_parameter("hf_dataset_name", "mastermani305/ps-raw")
     dataset_download_task.set_parameter("hf_config_name", "ps-2-2-sample")
     dataset_download_task.set_parameter("input_task_id", input_artifacts_task.id)
+    print("dataset_download_task", dataset_download_task.id, "dataset_download_base_task", dataset_download_base_task.id)
     # dataset_download_task.set_parameters(
     #     {
     #         "hf_dataset_name": "mastermani305/ps-raw",
