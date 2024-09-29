@@ -5,18 +5,20 @@ import config
 def main():
     base_project_name = config.base_project_name  # "Test/Audio Transcription"
     dataset_download_queue_name = "cpu_worker"
-
-    input_artifacts_task = Task.create(
-        project_name=base_project_name, task_name=config.input_artifacts_task_name
+    project_template = f"{base_project_name}/template"
+    input_artifacts_task = Task.get_task(
+        project_name=project_template, task_name=config.input_artifacts_task_name
     )
-    output_artifacts_task = Task.create(
-        project_name=base_project_name, task_name=config.output_artifacts_task_name
+    output_artifacts_task = Task.get_task(
+        project_name=project_template, task_name=config.output_artifacts_task_name
     )
 
-    dataset_download_task: Task = Task.init(
-        project_name=f"{base_project_name}/template",
+    dataset_download_base_task = Task.get_task(
+        project_name=project_template,
         task_name=config.download_dataset_base_task_name,
     )
+    dataset_download_task = Task.clone(
+        dataset_download_base_task, name=config.download_dataset_base_task_name, project=base_project_name)
     dataset_download_task.set_parameters(
         {
             "hf_dataset_name": "mastermani305/ps-raw",
