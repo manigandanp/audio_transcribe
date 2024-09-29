@@ -8,6 +8,7 @@ def register_base_task(project_name, task_name, script_path, task_type):
         task_type=task_type,
         repo="https://github.com/manigandanp/audio_transcribe.git",
         branch="main",
+        script=script_path
     )
     task.set_script(script_path)
     task.close()
