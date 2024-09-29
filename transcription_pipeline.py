@@ -59,6 +59,9 @@ class BatchProcessor:
             transcriptions.append((audio_name, transcription))
         
         self.chunk_and_upload(transcriptions)
+        print("All batches processed.")
+        print("Deleting input audios to save space...")
+        self.delete_original_artifacts()
 
     def chunk_and_upload(self, transcriptions):
         for audio_name, trans in transcriptions:
