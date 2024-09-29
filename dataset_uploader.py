@@ -5,9 +5,8 @@ import os
 import shutil
 
 class DatasetUploader:
-    def __init__(self, input_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset):
-        self.task = Task.current_task()
-        self.input_task = Task.get_task(task_id=input_task_id)
+    def __init__(self, output_artifacts_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset):
+        self.output_artifacts_task = Task.get_task(task_id=output_artifacts_task_id)
         self.hf_output_dataset_name = hf_output_dataset_name
         self.output_dir = "final_output"
         os.makedirs(self.output_dir, exist_ok=True)
@@ -16,11 +15,13 @@ class DatasetUploader:
         self.token = os.getenv("HF_TOKEN")
         self.hf_config_name = hf_config_name
         self.is_private_dataset = is_private_dataset
-
+        print("Dataset Uploader initialized")
+        
     def upload(self):
         all_metadata = []
-        
-        for artifact_name, artifact in self.input_task.artifacts.items():
+        print("Uploading artifacts")
+        print(self.output_artifacts_task.artifacts)
+        for artifact_name, artifact in self.output_artifacts_task.artifacts.items():
             if artifact_name.endswith("_metadata"):
                 df = pd.read_csv(artifact.get_local_copy())
                 all_metadata.append(df)
@@ -61,7 +62,7 @@ class DatasetUploader:
 
 if __name__ == "__main__":
     task = Task.current_task()
-    task_parameters = task.get_parameters_as_dict()["General"]
+    task_parameters = task.get_parameters_as_dict(cast=True)["General"]
     output_task_id = task_parameters.get("output_task_id")
     hf_output_dataset_name = task_parameters.get("hf_output_dataset_name")
     hf_config_name = task_parameters.get("hf_config_name")
@@ -71,3 +72,15 @@ if __name__ == "__main__":
     uploader.upload()
     
     task.close()
+    
+    # task = Task.init(project_name="Test/Audio Transcription", task_name="upload_dataset")
+    # Task.enqueue(task=task, queue_name="cpu_worker")
+    # output_task_id = '68bfcd56cc8a40108ce65afd741fd93b'
+    # hf_output_dataset_name = 'mastermani305/ps-transcribed'
+    # hf_config_name = 'ps-2-2-sample'
+    # is_private_dataset = True
+    
+    # uploader = DatasetUploader(output_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset)
+    # uploader.upload()
+    
+    # task.close()
