@@ -40,23 +40,23 @@ if __name__ == "__main__":
     base_project_template = f"{config.base_project_name}/template"
 
     download_dataset_params = {
-        "hf_dataset_name": "mastermani305/ps-raw",
-        "hf_config_name": "ps-2-2-sample",
-        "input_task_id": "",
+        "General/hf_dataset_name": "mastermani305/ps-raw",
+        "General/hf_config_name": "ps-2-2-sample",
+        "General/input_task_id": "",
     }
 
     transcription_task_params = {
-        "batch_index": 0,
-        "batch_size": 10,
-        "input_task_id": "",
-        "output_task_id": "",
+        "General/batch_index": 0,
+        "General/batch_size": 10,
+        "General/input_task_id": "",
+        "General/output_task_id": "",
     }
 
     upload_task_params = {
-        "output_task_id": "",
-        "hf_output_dataset_name": "ps-transcribed",
-        "hf_config_name": "ps-2-2-sample",
-        "is_private_dataset": True,
+        "General/output_task_id": "",
+        "General/hf_output_dataset_name": "ps-transcribed",
+        "General/hf_config_name": "ps-2-2-sample",
+        "General/is_private_dataset": True,
     }
 
     register_base_task(
