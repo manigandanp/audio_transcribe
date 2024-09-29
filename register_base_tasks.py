@@ -76,7 +76,7 @@ if __name__ == "__main__":
     register_base_task(
         project_name=base_project_template,
         task_name=config.upload_dataset_base_task_name,
-        script_path="dataset_upload.py",
+        script_path="dataset_uploader.py",
         task_type=TaskTypes.data_processing,
         params_dict=upload_task_params,
     )
