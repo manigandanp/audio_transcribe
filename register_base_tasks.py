@@ -29,7 +29,6 @@ def register_base_task(project_name, task_name, script_path, task_type):
         branch="main",
         script=script_path
     )
-    task.set_script(script_path)
     task.close()
     print(f"Registered base task: {task_name}")
 
@@ -61,13 +60,13 @@ if __name__ == "__main__":
     register_base_task(
         project_name=base_project_template,
         task_name=config.input_artifacts_task_name,
-        script_path=None,
+        script_path="",
         task_type=TaskTypes.custom,
     )
     
     register_base_task(
         project_name=base_project_template,
         task_name=config.output_artifacts_task_name,
-        script_path=None,
+        script_path="",
         task_type=TaskTypes.custom,
     )

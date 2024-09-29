@@ -18,7 +18,10 @@ def main():
         task_name=config.download_dataset_base_task_name,
     )
     dataset_download_task = Task.clone(
-        dataset_download_base_task, name=config.download_dataset_base_task_name, project=base_project_name)
+        dataset_download_base_task,
+        name="dataset_download_task",
+        project=Task.get_project_id(base_project_name, False),
+    )
     dataset_download_task.set_parameters(
         {
             "hf_dataset_name": "mastermani305/ps-raw",
@@ -27,7 +30,7 @@ def main():
         }
     )
     Task.enqueue(dataset_download_task, queue_name=dataset_download_queue_name)
-    dataset_download_task.wait_for_status(Task.TaskStatusEnum.completed)
+    dataset_download_task.wait_for_status([Task.TaskStatusEnum.completed])
     print("completed downloading from huggingface and uploading to clearml")
     print(input_artifacts_task.artifacts)
     dataset_download_task.close()
