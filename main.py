@@ -2,15 +2,21 @@ from clearml import PipelineController, Task
 import config
 from dataset_utils import get_dataset_size
 
+
 def main():
     base_project_name = config.base_project_name  # "Test/Audio Transcription"
     cpu_queue = "cpu_worker"
+    gpu_queue = "gpu_worker"
     project_template = f"{base_project_name}/template"
     input_artifacts_task = Task.get_task(
-        project_name=project_template, task_name=config.input_artifacts_task_name, allow_archived=False
+        project_name=project_template,
+        task_name=config.input_artifacts_task_name,
+        allow_archived=False,
     )
     output_artifacts_task = Task.get_task(
-        project_name=project_template, task_name=config.output_artifacts_task_name, allow_archived=False
+        project_name=project_template,
+        task_name=config.output_artifacts_task_name,
+        allow_archived=False,
     )
 
     # dataset_download_base_task = Task.get_task(
@@ -75,19 +81,19 @@ def main():
     pipe.add_step(
         name="download_dataset",
         base_task_project=f"{base_project_name}/template",
-        base_task_name="dataset_loader_base",
+        base_task_name=config.download_dataset_base_task_name,
         execution_queue=cpu_queue,
         parameter_override={
             "hf_dataset_name": hf_dataset_name,
             "hf_config_name": hf_config_name,
-            "input_task_id": input_artifacts_task.id
-        }
+            "input_task_id": input_artifacts_task.id,
+        },
     )
 
     # Dynamically add batch processing steps
     batch_step_names = []
     # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
-    dataset_len = get_dataset_size(hf_dataset_name, hf_config_name, split='train')
+    dataset_len = get_dataset_size(hf_dataset_name, hf_config_name, split="train")
     total_batches = (len(dataset_len) + batch_size - 1) // batch_size
     for i in range(total_batches):
         batch_step_name = f"transcribe_batch_{i}"
@@ -96,7 +102,7 @@ def main():
             base_task_project=f"{base_project_name}/template",
             base_task_name=config.transcribe_base_task_name,
             parents=["download_dataset"],
-            execution_queue="gpu_woker",
+            execution_queue=gpu_queue,
             parameter_override={
                 "batch_index": i,
                 "batch_size": batch_size,
@@ -112,7 +118,7 @@ def main():
         base_task_project=f"{base_project_name}/template",
         base_task_name=config.upload_dataset_base_task_name,
         parents=batch_step_names,
-        execution_queue="cpu_worker",
+        execution_queue=cpu_queue,
         parameter_override={
             "output_task_id": output_artifacts_task.id,
             "hf_output_dataset_name": hf_output_dataset_name,
