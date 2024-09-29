@@ -94,7 +94,7 @@ def main():
     batch_step_names = []
     # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
     dataset_len = get_dataset_size(hf_dataset_name, hf_config_name, split="train")
-    total_batches = (len(dataset_len) + batch_size - 1) // batch_size
+    total_batches = (dataset_len + batch_size - 1) // batch_size
     for i in range(total_batches):
         batch_step_name = f"transcribe_batch_{i}"
         pipe.add_step(
