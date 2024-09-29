@@ -144,7 +144,7 @@ if __name__ == "__main__":
     task_parameters = task.get_parameters_as_dict()["General"]
     input_task_id = task_parameters.get("input_task_id")
     output_task_id = task_parameters.get("output_task_id")
-    batch_index = task_parameters.get("batch_index")
-    batch_size = task_parameters.get("batch_size")
+    batch_index = int(task_parameters.get("batch_index"))
+    batch_size = int(task_parameters.get("batch_size"))
     batch_processor = BatchProcessor(input_task_id, output_task_id, batch_index, batch_size)
     batch_processor.process_batch()

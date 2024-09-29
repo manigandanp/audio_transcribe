@@ -72,7 +72,7 @@ def main():
 
     hf_dataset_name = pipe.get_parameters().get("hf_dataset_name")
     hf_config_name = pipe.get_parameters().get("hf_config_name")
-    batch_size = pipe.get_parameters().get("batch_size")
+    batch_size = int(pipe.get_parameters().get("batch_size"))
     hf_output_dataset_name = pipe.get_parameters().get("hf_output_dataset_name")
     is_private_dataset = pipe.get_parameters().get("is_private_dataset")
     # base_project_name = pipe.get_parameters().get("base_project_name")
@@ -93,7 +93,7 @@ def main():
     # Dynamically add batch processing steps
     batch_step_names = []
     # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
-    dataset_len = get_dataset_size(hf_dataset_name, hf_config_name, split="train")
+    dataset_len = int(get_dataset_size(hf_dataset_name, hf_config_name, split="train"))
     total_batches = (dataset_len + batch_size - 1) // batch_size
     for i in range(total_batches):
         batch_step_name = f"transcribe_batch_{i}"
