@@ -26,6 +26,7 @@ class DatasetLoader:
         for item in dataset:
             filename = item["filename"]
             audio_file = item["audio"]
+            print(f"Uploading {filename} to ClearML", audio_file)
             self.task.upload_artifact(filename, audio_file)
         return self.task.id
 
@@ -35,7 +36,7 @@ if __name__ == "__main__":
     input_task_id = task.get_parameter("input_task_id")
     hf_output_dataset_name = task.get_parameter("hf_output_dataset_name")
     hf_config_name = task.get_parameter("hf_config_name")
-    
+    print(f"Input Task ID: {input_task_id}", hf_output_dataset_name, hf_config_name)
     loader = DatasetLoader(input_task_id, hf_output_dataset_name, hf_config_name)
     loader.upload_to_clearml()
     
