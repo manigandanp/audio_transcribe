@@ -84,9 +84,9 @@ def main():
         base_task_name=config.download_dataset_base_task_name,
         execution_queue=cpu_queue,
         parameter_override={
-            "hf_dataset_name": hf_dataset_name,
-            "hf_config_name": hf_config_name,
-            "input_task_id": input_artifacts_task.id,
+            "General/hf_dataset_name": hf_dataset_name,
+            "General/hf_config_name": hf_config_name,
+            "General/input_task_id": input_artifacts_task.id,
         },
     )
 
@@ -104,10 +104,10 @@ def main():
             parents=["download_dataset"],
             execution_queue=gpu_queue,
             parameter_override={
-                "batch_index": i,
-                "batch_size": batch_size,
-                "input_task_id": input_artifacts_task.id,
-                "output_task_id": output_artifacts_task.id,
+                "General/batch_index": i,
+                "General/batch_size": batch_size,
+                "General/input_task_id": input_artifacts_task.id,
+                "General/output_task_id": output_artifacts_task.id,
             },
         )
         batch_step_names.append(batch_step_name)
@@ -120,10 +120,10 @@ def main():
         parents=batch_step_names,
         execution_queue=cpu_queue,
         parameter_override={
-            "output_task_id": output_artifacts_task.id,
-            "hf_output_dataset_name": hf_output_dataset_name,
-            "hf_config_name": hf_config_name,
-            "is_private_dataset": is_private_dataset,
+            "General/output_task_id": output_artifacts_task.id,
+            "General/hf_output_dataset_name": hf_output_dataset_name,
+            "General/hf_config_name": hf_config_name,
+            "General/is_private_dataset": is_private_dataset,
         },
     )
 
