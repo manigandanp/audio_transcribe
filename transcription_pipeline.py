@@ -20,10 +20,10 @@ class TranscriptionPipeline:
         return [(seg.start, seg.end, seg.text) for seg in segments]
 
 class BatchProcessor:
-    def __init__(self, input_task_id: str, output_task_name: str, batch_index: int, batch_size: int):
+    def __init__(self, input_task_id: str, output_task_id: str, batch_index: int, batch_size: int):
         self.WISHPER_TRANSCRIPTION_SAMPLING_RATE = 16000
         self.input_task = Task.get_task(task_id=input_task_id)
-        self.output_task = Task.init(project_name=self.input_task.get_project_name(), task_name=output_task_name)
+        self.output_task = Task.get_task(task_id=output_task_id)
         self.batch_index = batch_index
         self.batch_size = batch_size
         self.transcription_pipeline = TranscriptionPipeline()
@@ -140,9 +140,11 @@ class BatchProcessor:
             print("No .wav artifacts found to delete.")
                 
 if __name__ == "__main__":
-    task_id = '5577b069b2634bc09dd22280a1d90137'
-    output_task_name = 'Transcription Task-1'
-    batch_index = 0
-    batch_size = 1
-    batch_processor = BatchProcessor(task_id, output_task_name, batch_index, batch_size)
+    task = Task.current_task()
+    task_parameters = task.get_parameters_as_dict()["General"]
+    input_task_id = task_parameters.get("input_task_id")
+    output_task_id = task_parameters.get("output_task_id")
+    batch_index = task_parameters.get("batch_index")
+    batch_size = task_parameters.get("batch_size")
+    batch_processor = BatchProcessor(input_task_id, output_task_id, batch_index, batch_size)
     batch_processor.process_batch()

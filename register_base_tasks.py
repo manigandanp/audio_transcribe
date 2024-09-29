@@ -45,6 +45,20 @@ if __name__ == "__main__":
         "input_task_id": "",
     }
 
+    transcription_task_params = {
+        "batch_index": 0,
+        "batch_size": 10,
+        "input_task_id": "",
+        "output_task_id": "",
+    }
+
+    upload_task_params = {
+        "output_task_id": "",
+        "hf_output_dataset_name": "ps-transcribed",
+        "hf_config_name": "ps-2-2-sample",
+        "is_private_dataset": True,
+    }
+
     register_base_task(
         project_name=base_project_template,
         task_name=config.download_dataset_base_task_name,
@@ -57,12 +71,14 @@ if __name__ == "__main__":
         task_name=config.transcribe_base_task_name,
         script_path="transcription_pipeline.py",
         task_type=TaskTypes.data_processing,
+        params_dict=transcription_task_params,
     )
     register_base_task(
         project_name=base_project_template,
         task_name=config.upload_dataset_base_task_name,
         script_path="dataset_upload.py",
         task_type=TaskTypes.data_processing,
+        params_dict=upload_task_params,
     )
 
     register_base_task(

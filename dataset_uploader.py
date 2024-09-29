@@ -61,12 +61,13 @@ class DatasetUploader:
 
 if __name__ == "__main__":
     task = Task.current_task()
-    input_task_id = task.get_parameter("input_task_id")
-    hf_output_dataset_name = task.get_parameter("hf_output_dataset_name")
-    hf_config_name = task.get_parameter("hf_config_name")
-    is_private_dataset = task.get_parameter("is_private_dataset")
+    task_parameters = task.get_parameters_as_dict()["General"]
+    output_task_id = task_parameters.get("output_task_id")
+    hf_output_dataset_name = task_parameters.get("hf_output_dataset_name")
+    hf_config_name = task_parameters.get("hf_config_name")
+    is_private_dataset = task_parameters.get("is_private_dataset")
     
-    uploader = DatasetUploader(input_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset)
+    uploader = DatasetUploader(output_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset)
     uploader.upload()
     
     task.close()
