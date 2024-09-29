@@ -1,11 +1,19 @@
 from clearml import Task
 import pandas as pd
-from datasets import Dataset, Audio, load_dataset
+from datasets import load_dataset
 import os
 import shutil
 
+
 class DatasetUploader:
-    def __init__(self, output_artifacts_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset):
+    def __init__(
+        self,
+        output_artifacts_task_id,
+        hf_output_dataset_name,
+        hf_config_name,
+        is_private_dataset,
+    ):
+        print("initilizing...")
         self.output_artifacts_task = Task.get_task(task_id=output_artifacts_task_id)
         self.hf_output_dataset_name = hf_output_dataset_name
         self.output_dir = "final_output"
@@ -16,7 +24,7 @@ class DatasetUploader:
         self.hf_config_name = hf_config_name
         self.is_private_dataset = is_private_dataset
         print("Dataset Uploader initialized")
-        
+
     def upload(self):
         all_metadata = []
         print("Uploading artifacts")
@@ -35,8 +43,10 @@ class DatasetUploader:
         merged_metadata.to_csv(merged_metadata_path, index=False)
 
         # Update paths in merged metadata
-        merged_metadata['audio'] = merged_metadata['chunk_name'].apply(lambda x: os.path.join('wavs', x))
-        
+        merged_metadata["audio"] = merged_metadata["chunk_name"].apply(
+            lambda x: os.path.join("wavs", x)
+        )
+
         # Create and upload Hugging Face dataset
         self.create_and_upload_hf_dataset(merged_metadata)
 
@@ -47,7 +57,7 @@ class DatasetUploader:
     def move_wav_files(self, source_folder):
         for root, _, files in os.walk(source_folder):
             for file in files:
-                if file.endswith('.wav'):
+                if file.endswith(".wav"):
                     source_path = os.path.join(root, file)
                     dest_path = os.path.join(self.wavs_dir, file)
                     shutil.move(source_path, dest_path)
@@ -58,7 +68,13 @@ class DatasetUploader:
         metadata.to_csv(updated_metadata_path, index=False)
         dataset = load_dataset("audiofolder", data_dir=self.output_dir, split="train")
 
-        dataset.push_to_hub(self.hf_output_dataset_name, self.hf_config_name, token=self.token, private=self.is_private_dataset)
+        dataset.push_to_hub(
+            self.hf_output_dataset_name,
+            self.hf_config_name,
+            token=self.token,
+            private=self.is_private_dataset,
+        )
+
 
 if __name__ == "__main__":
     task = Task.current_task()
@@ -67,20 +83,28 @@ if __name__ == "__main__":
     hf_output_dataset_name = task_parameters.get("hf_output_dataset_name")
     hf_config_name = task_parameters.get("hf_config_name")
     is_private_dataset = task_parameters.get("is_private_dataset")
-    
-    uploader = DatasetUploader(output_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset)
+    print(
+        "Task parameters:",
+        output_task_id,
+        hf_output_dataset_name,
+        hf_config_name,
+        is_private_dataset,
+    )
+    uploader = DatasetUploader(
+        output_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset
+    )
     uploader.upload()
-    
+    print("closing..")
     task.close()
-    
+
     # task = Task.init(project_name="Test/Audio Transcription", task_name="upload_dataset")
     # Task.enqueue(task=task, queue_name="cpu_worker")
     # output_task_id = '68bfcd56cc8a40108ce65afd741fd93b'
     # hf_output_dataset_name = 'mastermani305/ps-transcribed'
     # hf_config_name = 'ps-2-2-sample'
     # is_private_dataset = True
-    
+
     # uploader = DatasetUploader(output_task_id, hf_output_dataset_name, hf_config_name, is_private_dataset)
     # uploader.upload()
-    
+
     # task.close()
