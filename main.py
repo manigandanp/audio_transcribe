@@ -83,6 +83,7 @@ def main():
             base_task_project=f"{base_project_name}/template",
             base_task_name=config.transcribe_base_task_name,
             # parents=["download_dataset"],
+            execution_queue="gpu_woker",
             parameter_override={
                 "batch_index": i,
                 "batch_size": batch_size,
@@ -98,6 +99,7 @@ def main():
         base_task_project=f"{base_project_name}/template",
         base_task_name=config.upload_dataset_base_task_name,
         parents=batch_step_names,
+        execution_queue="cpu_worker",
         parameter_override={
             "hf_output_dataset_name": hf_output_dataset_name,
             "hf_config_name": hf_config_name,
