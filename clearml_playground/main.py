@@ -52,7 +52,11 @@ def main():
     hf_output_dataset_name = pipe.get_parameters().get("hf_output_dataset_name")
     is_private_dataset = pipe.get_parameters().get("is_private_dataset")
     # base_project_name = pipe.get_parameters().get("base_project_name")
-
+    print("pipe.get_paramenters")
+    print(pipe.get_parameters())
+    
+    # print(pipeline)
+    "${pipeline.hf_output_dataset_name}"
     # Dataset Loader Step
     pipe.add_step(
         name="download_dataset",
@@ -60,8 +64,8 @@ def main():
         base_task_name=config.download_dataset_base_task_name,
         execution_queue=cpu_queue,
         parameter_override={
-            "General/hf_dataset_name": hf_dataset_name,
-            "General/hf_config_name": hf_config_name,
+            "General/hf_dataset_name": "${pipeline.hf_dataset_name}",
+            "General/hf_config_name": "${pipeline.hf_config_name}",
             "General/input_task_id": input_artifacts_task.id,
         },
         task_overrides={'script.requirements.pip': "clearml"}
