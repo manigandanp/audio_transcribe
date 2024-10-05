@@ -89,7 +89,7 @@ def main():
     pipe.add_step(
         name="wait_for_batches",
         base_task_project=f"{base_project_name}/template",
-        base_task_name=config.wait_for_batches_base_task,
+        base_task_name=config.wait_for_batches_base_task_name,
         parents=["transcription_batch_controller"],
         execution_queue=cpu_queue,
         parameter_override={
