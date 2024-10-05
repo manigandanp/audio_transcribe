@@ -8,6 +8,7 @@ def batch_controller(
     # input_artifacts_task = Task.get_task(task_id=input_artifacts_task_id)
     # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
     # dataset_len = int(get_dataset_size(hf_dataset_name, hf_config_name, split="train"))
+    
     dataset_len = random.randint(1, 30)
     total_batches = (dataset_len + batch_size - 1) // batch_size
     
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     params = Task.current_task().get_parameters()
     
     batch_controller(
-        params['General/batch_size'],
+        int(params['General/batch_size']),
         params['General/input_artifacts_task_id'],
         params['General/output_artifacts_task_id']
     )
