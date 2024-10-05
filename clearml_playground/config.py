@@ -1,5 +1,6 @@
 base_project_name="Clearml_Playground/PipelineTest/Audio Transcription"
 download_dataset_base_task_name="download_dataset_base_task"
+batch_controller_base_task_name="batch_controller_base_task"
 transcribe_base_task_name="transcribe_base_task"
 upload_dataset_base_task_name="upload_dataset_base_task"
 input_artifacts_task_name="input_artifacts"
