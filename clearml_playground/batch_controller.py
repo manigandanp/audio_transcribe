@@ -17,6 +17,7 @@ def batch_controller(
         task_name=config.transcribe_base_task_name,
         allow_archived=False,
     )
+    transcription_tasks_project = Task.cre(project_name=config.transcription_tasks_project_name)
     
     enqueued_task_ids = []
 
@@ -24,7 +25,7 @@ def batch_controller(
         task = Task.clone(
             transcription_base_task,
             parent=Task.current_task(),
-            project=f"{config.base_project_name}/Transcription",
+            project=transcription_tasks_project.id,
             name=f"transcribe_batch_{i}",
         )
         task.set_parameters(
@@ -55,7 +56,7 @@ if __name__ == "__main__":
     
     batch_controller(
         int(params['General/batch_size']),
-        params['General/input_artifacts_task_id'],
-        params['General/output_artifacts_task_id']
+        params['General/input_task_id'],
+        params['General/output_task_id']
     )
 

@@ -39,7 +39,7 @@ def register_base_task(project_name, task_name, script_path, task_type, params_d
 if __name__ == "__main__":
     import config
 
-    base_project_template = f"{config.base_project_name}/template"
+    base_project_template = config.task_templates_project_name
     batch_size = 10
     download_dataset_params = {
         "General/hf_dataset_name": "mastermani305/ps-raw",
@@ -118,4 +118,12 @@ if __name__ == "__main__":
         task_name=config.output_artifacts_task_name,
         script_path="",
         task_type=TaskTypes.custom,
+    )
+
+    register_base_task(
+        project_name=config.transcription_tasks_project_name,
+        task_name="transcription_task",
+        script_path="",
+        task_type=TaskTypes.data_processing,
+        params_dict={},
     )
