@@ -40,16 +40,22 @@ if __name__ == "__main__":
     import config
 
     base_project_template = f"{config.base_project_name}/template"
-
+    batch_size = 10
     download_dataset_params = {
         "General/hf_dataset_name": "mastermani305/ps-raw",
         "General/hf_config_name": "ps-2-2-sample",
         "General/input_task_id": "",
     }
-
+    
+    batch_controller_task_params = {
+        "General/batch_size": batch_size,
+        "General/input_task_id": "",
+        "General/output_task_id": "",
+    }
+    
     transcription_task_params = {
         "General/batch_index": 0,
-        "General/batch_size": 10,
+        "General/batch_size": batch_size,
         "General/input_task_id": "",
         "General/output_task_id": "",
     }
@@ -67,6 +73,13 @@ if __name__ == "__main__":
         script_path="dataset_loader.py",
         task_type=TaskTypes.data_processing,
         params_dict=download_dataset_params,
+    )
+    register_base_task(
+        project_name=base_project_template,
+        task_name=config.batch_controller_base_task_name,
+        script_path="batch_controller.py",
+        task_type=TaskTypes.data_processing,
+        params_dict=batch_controller_task_params,
     )
     register_base_task(
         project_name=base_project_template,
