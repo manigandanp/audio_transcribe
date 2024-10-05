@@ -56,7 +56,7 @@ def main():
     print(pipe.get_parameters())
     
     # print(pipeline)
-    "${pipeline.hf_output_dataset_name}"
+    print(f"${pipeline}")
     # Dataset Loader Step
     pipe.add_step(
         name="download_dataset",
@@ -76,7 +76,7 @@ def main():
     batch_step_names = []
     # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
     # dataset_len = int(get_dataset_size(hf_dataset_name, hf_config_name, split="train"))
-    
+    batch_size = int("${pipeline.batch_size}")
     dataset_len = random.randint(1, 15)
     total_batches = (dataset_len + batch_size - 1) // batch_size
     for i in range(total_batches):
