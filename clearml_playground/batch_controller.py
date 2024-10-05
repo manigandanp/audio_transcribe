@@ -9,7 +9,7 @@ def batch_controller(
     # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
     # dataset_len = int(get_dataset_size(hf_dataset_name, hf_config_name, split="train"))
     
-    dataset_len = random.randint(1, 30)
+    dataset_len = random.randint(1, 10)
     total_batches = (dataset_len + batch_size - 1) // batch_size
     
     transcription_base_task = Task.get_task(
@@ -17,11 +17,14 @@ def batch_controller(
         task_name=config.transcribe_base_task_name,
         allow_archived=False,
     )
+    
+    enqueued_task_ids = []
 
     for i in range(total_batches):
         task = Task.clone(
             transcription_base_task,
             parent=Task.current_task(),
+            project=f"{config.base_project_name}/Transcription",
             name=f"transcribe_batch_{i}",
         )
         task.set_parameters(
@@ -36,10 +39,15 @@ def batch_controller(
             task=task,
             queue_name="gpu_worker",
         )
+        
+        enqueued_task_ids.append(task.id)
 
     Logger.current_logger().report_scalar(
         title="Batch Info", series="Total Batches", value=total_batches, iteration=0
     )
+    
+    current_task = Task.current_task()
+    current_task.upload_artifact("enqueued_task_ids", enqueued_task_ids)
 
 if __name__ == "__main__":
 

@@ -73,7 +73,7 @@ def main():
     )
 
     pipe.add_step(
-        name="batch_controller",
+        name="transcription_batch_controller",
         base_task_project=f"{base_project_name}/template",
         base_task_name=config.batch_controller_base_task_name,  
         parents=["download_dataset"],
@@ -86,12 +86,24 @@ def main():
         task_overrides={'script.requirements': {'pip': ['clearml']}}
     )
     
+    pipe.add_step(
+        name="wait_for_batches",
+        base_task_project=f"{base_project_name}/template",
+        base_task_name="wait_for_batches",
+        parents=["transcription_batch_controller"],
+        execution_queue=cpu_queue,
+        parameter_override={
+            "General/controller_task_id": "${transcription_batch_controller.id}",
+        },
+        task_overrides={'script.requirements': {'pip': ['clearml']}}
+    )
+    
     # Final processing step
     pipe.add_step(
         name="upload_dataset",
         base_task_project=f"{base_project_name}/template",
         base_task_name=config.upload_dataset_base_task_name,
-        parents=["batch_controller"],
+        parents=["wait_for_batches"],
         execution_queue=cpu_queue,
         parameter_override={
             "General/output_task_id": output_artifacts_task.id,

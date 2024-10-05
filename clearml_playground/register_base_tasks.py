@@ -59,6 +59,9 @@ if __name__ == "__main__":
         "General/input_task_id": "",
         "General/output_task_id": "",
     }
+    transcription_task_params = {
+        "General/controller_task_id": ""
+    }
 
     upload_task_params = {
         "General/output_task_id": "",
@@ -85,6 +88,13 @@ if __name__ == "__main__":
         project_name=base_project_template,
         task_name=config.transcribe_base_task_name,
         script_path="transcription_pipeline.py",
+        task_type=TaskTypes.data_processing,
+        params_dict=transcription_task_params,
+    )
+    register_base_task(
+        project_name=base_project_template,
+        task_name=config.wait_for_batches_base_task_name,
+        script_path="wait_for_batches.py",
         task_type=TaskTypes.data_processing,
         params_dict=transcription_task_params,
     )
