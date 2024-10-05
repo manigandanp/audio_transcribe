@@ -75,7 +75,7 @@ def main():
     pipe.add_step(
         name="batch_controller",
         base_task_project=f"{base_project_name}/template",
-        base_task_name="batch_controller",  # Create this task in the UI or programmatically
+        base_task_name=config.batch_controller_base_task_name,  
         parents=["download_dataset"],
         execution_queue=cpu_queue,
         parameter_override={
