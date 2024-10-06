@@ -98,7 +98,7 @@ def main():
             "General/hf_config_name": "${pipeline.hf_config_name}",
             "General/is_private_dataset": "${pipeline.is_private_dataset}",
         },
-        task_overrides={"script.requirements.pip": ["clearml", "datasets"]},
+        task_overrides={"script.requirements.pip": ["clearml", "datasets", "soundfile", "librosa"]},
     )
 
     pipe.start(queue=None)
