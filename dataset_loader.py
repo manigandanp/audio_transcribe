@@ -40,6 +40,7 @@ if __name__ == "__main__":
     print(f"Input Task ID: {input_task_id}", hf_dataset_name, hf_config_name)
     loader = DatasetLoader(input_task_id, hf_dataset_name, hf_config_name)
     loader.upload_to_clearml()
-
+    print("waiting for upload to complete")
+    task.flush(wait_for_uploads=True)
+    print("upload complete...")
     task.close()
-    
