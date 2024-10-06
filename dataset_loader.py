@@ -43,4 +43,4 @@ if __name__ == "__main__":
     print("waiting for upload to complete")
     task.flush(wait_for_uploads=True)
     print("upload complete...")
-    task.close()
+    task.completed()
