@@ -26,7 +26,7 @@ class DatasetLoader:
         for item in dataset:
             filename = item["filename"]
             audio_file = item["audio"]
-            print(f"Uploading {filename} to ClearML", audio_file)
+            print(f"Uploading {filename} to ClearML")
             self.task.upload_artifact(filename, audio_file)
         return self.task.id
 

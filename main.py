@@ -26,6 +26,7 @@ def main():
         add_pipeline_tags=False,
         repo="https://github.com/manigandanp/audio_transcribe.git",
         repo_branch="main",
+        packages=["clearml"],
     )
 
     pipe.add_parameter(
@@ -72,7 +73,7 @@ def main():
             "General/hf_config_name": "${pipeline.hf_config_name}",
             "General/queue_name": gpu_queue,
         },
-        task_overrides={"script.requirements": {"pip": ["clearml"]}},
+        task_overrides={"script.requirements": {"pip": ["clearml", "datasets"]}},
     )
 
     pipe.add_step(

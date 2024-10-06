@@ -1,5 +1,4 @@
 from clearml import Task, Logger
-import random
 import config
 from dataset_utils import get_dataset_size
 
