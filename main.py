@@ -7,7 +7,7 @@ def main():
     base_project_name = config.base_project_name  # "Test/Audio Transcription"
     cpu_queue = "cpu_worker"
     gpu_queue = "gpu_worker"
-    project_template = f"{base_project_name}/template"
+    project_template = config.task_templates_project_name
     input_artifacts_task = Task.get_task(
         project_name=project_template,
         task_name=config.input_artifacts_task_name,
@@ -18,33 +18,6 @@ def main():
         task_name=config.output_artifacts_task_name,
         allow_archived=False,
     )
-
-    # dataset_download_base_task = Task.get_task(
-    #     project_name=project_template,
-    #     task_name=config.download_dataset_base_task_name,
-    #     allow_archived=False
-    # )
-    # dataset_download_task = Task.clone(
-    #     dataset_download_base_task,
-    #     name="dataset_download_task",
-    #     project=Task.get_project_id(base_project_name, False),
-    # )
-    # dataset_download_task.set_parameter("hf_dataset_name", "mastermani305/ps-raw")
-    # dataset_download_task.set_parameter("hf_config_name", "ps-2-2-sample")
-    # dataset_download_task.set_parameter("input_task_id", input_artifacts_task.id)
-    # print("dataset_download_task", dataset_download_task.id, "dataset_download_base_task", dataset_download_base_task.id)
-    # dataset_download_task.set_parameters(
-    #     {
-    #         "hf_dataset_name": "mastermani305/ps-raw",
-    #         "hf_config_name": "ps-2-2-sample",
-    #         "input_task_id": input_artifacts_task.id,
-    #     }
-    # )
-    # Task.enqueue(dataset_download_task, queue_name=dataset_download_queue_name)
-    # dataset_download_task.wait_for_status([Task.TaskStatusEnum.completed])
-    # print("completed downloading from huggingface and uploading to clearml")
-    # print(input_artifacts_task.artifacts)
-    # dataset_download_task.close()
 
     pipe = PipelineController(
         name="audio_transcription_pipeline",
@@ -68,63 +41,64 @@ def main():
         param_type="string",
     )
     pipe.add_parameter(name="is_private_dataset", default="True", param_type="bool")
-    # pipe.add_parameter(name="base_project_name", default=base_project_name, param_type="string")
-
-    hf_dataset_name = pipe.get_parameters().get("hf_dataset_name")
-    hf_config_name = pipe.get_parameters().get("hf_config_name")
-    batch_size = int(pipe.get_parameters().get("batch_size"))
-    hf_output_dataset_name = pipe.get_parameters().get("hf_output_dataset_name")
-    is_private_dataset = pipe.get_parameters().get("is_private_dataset")
-    # base_project_name = pipe.get_parameters().get("base_project_name")
-
+    
     # Dataset Loader Step
     pipe.add_step(
         name="download_dataset",
-        base_task_project=f"{base_project_name}/template",
+        base_task_project=project_template,
         base_task_name=config.download_dataset_base_task_name,
         execution_queue=cpu_queue,
         parameter_override={
-            "General/hf_dataset_name": hf_dataset_name,
-            "General/hf_config_name": hf_config_name,
+            "General/hf_dataset_name": "${pipeline.hf_dataset_name}",
+            "General/hf_config_name": "${pipeline.hf_config_name}",
             "General/input_task_id": input_artifacts_task.id,
         },
+        task_overrides={"script.requirements.pip": ["clearml", "datasets"]},
     )
 
-    # Dynamically add batch processing steps
-    batch_step_names = []
-    # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
-    dataset_len = int(get_dataset_size(hf_dataset_name, hf_config_name, split="train"))
-    total_batches = (dataset_len + batch_size - 1) // batch_size
-    for i in range(total_batches):
-        batch_step_name = f"transcribe_batch_{i}"
-        pipe.add_step(
-            name=batch_step_name,
-            base_task_project=f"{base_project_name}/template",
-            base_task_name=config.transcribe_base_task_name,
-            parents=["download_dataset"],
-            execution_queue=gpu_queue,
-            parameter_override={
-                "General/batch_index": i,
-                "General/batch_size": batch_size,
-                "General/input_task_id": input_artifacts_task.id,
-                "General/output_task_id": output_artifacts_task.id,
-            },
-        )
-        batch_step_names.append(batch_step_name)
+    pipe.add_step(
+        name="transcription_batch_controller",
+        base_task_project=project_template,
+        base_task_name=config.batch_controller_base_task_name,  
+        parents=["download_dataset"],
+        execution_queue=cpu_queue,
+        parameter_override={
+            "General/batch_size": "${pipeline.batch_size}",
+            "General/input_artifacts_task_id": input_artifacts_task.id,
+            "General/output_artifacts_task_id": output_artifacts_task.id,
+            "General/hf_dataset_name": "${pipeline.hf_dataset_name}",
+            "General/hf_config_name": "${pipeline.hf_config_name}",
+            "General/queue_name": gpu_queue,
+        },
+        task_overrides={'script.requirements': {'pip': ['clearml']}}
+    )
 
-    # Final processing step
+    pipe.add_step(
+        name="wait_for_batches",
+        base_task_project=project_template,
+        base_task_name=config.wait_for_batches_base_task_name,
+        parents=["transcription_batch_controller"],
+        execution_queue=cpu_queue,
+        parameter_override={
+            "General/controller_task_id": "${transcription_batch_controller.id}",
+        },
+        task_overrides={'script.requirements': {'pip': ['clearml']}}
+    )
+    
+    
     pipe.add_step(
         name="upload_dataset",
-        base_task_project=f"{base_project_name}/template",
+        base_task_project=project_template,
         base_task_name=config.upload_dataset_base_task_name,
-        parents=batch_step_names,
+        parents=["wait_for_batches"],
         execution_queue=cpu_queue,
         parameter_override={
             "General/output_task_id": output_artifacts_task.id,
-            "General/hf_output_dataset_name": hf_output_dataset_name,
-            "General/hf_config_name": hf_config_name,
-            "General/is_private_dataset": is_private_dataset,
+            "General/hf_output_dataset_name": "${pipeline.hf_output_dataset_name}",
+            "General/hf_config_name": "${pipeline.hf_config_name}",
+            "General/is_private_dataset": "${pipeline.is_private_dataset}",
         },
+        task_overrides={"script.requirements.pip": ["clearml", "datasets"]},
     )
 
     pipe.start(queue=None)
