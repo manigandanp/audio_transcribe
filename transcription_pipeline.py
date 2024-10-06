@@ -57,7 +57,7 @@ class BatchProcessor:
         self.chunk_and_upload(transcriptions)
         print("All batches processed.")
         print("Deleting input audios to save space...")
-        self.delete_original_artifacts()
+        self.delete_original_artifacts(batch)
 
     def chunk_and_upload(self, transcriptions):
         for audio_name, trans in transcriptions:
@@ -129,11 +129,11 @@ class BatchProcessor:
         self.output_task.close()
         print("Task closed successfully.")
 
-    def delete_original_artifacts(self):
+    def delete_original_artifacts(self, batch):
         print("Deleting original audio artifacts...")
         artifacts = self.input_task.artifacts
         artifact_names_to_delete = [
-            name for name in artifacts.keys() if name.endswith(".wav")
+            name for name in artifacts.keys() if name in batch
         ]
 
         if artifact_names_to_delete:
