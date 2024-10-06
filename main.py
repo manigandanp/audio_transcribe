@@ -65,8 +65,8 @@ def main():
         execution_queue=cpu_queue,
         parameter_override={
             "General/batch_size": "${pipeline.batch_size}",
-            "General/input_artifacts_task_id": input_artifacts_task.id,
-            "General/output_artifacts_task_id": output_artifacts_task.id,
+            "General/input_task_id": input_artifacts_task.id,
+            "General/output_task_id": output_artifacts_task.id,
             "General/hf_dataset_name": "${pipeline.hf_dataset_name}",
             "General/hf_config_name": "${pipeline.hf_config_name}",
             "General/queue_name": gpu_queue,

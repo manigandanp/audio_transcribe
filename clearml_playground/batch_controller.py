@@ -3,11 +3,8 @@ import random
 import config
 
 def batch_controller(
-    batch_size, input_artifacts_task_id, output_artifacts_task_id
+    batch_size, input_task_id, output_task_id
 ):
-    # input_artifacts_task = Task.get_task(task_id=input_artifacts_task_id)
-    # artifacts = [a for a in input_artifacts_task.artifacts if ".wav" in a]
-    # dataset_len = int(get_dataset_size(hf_dataset_name, hf_config_name, split="train"))
     
     dataset_len = random.randint(1, 10)
     total_batches = (dataset_len + batch_size - 1) // batch_size
@@ -32,8 +29,8 @@ def batch_controller(
             {
                 "General/batch_index": i,
                 "General/batch_size": batch_size,
-                "General/input_task_id": input_artifacts_task_id,
-                "General/output_task_id": output_artifacts_task_id,
+                "General/input_task_id": input_task_id,
+                "General/output_task_id": output_task_id,
             }
         )
         Task.enqueue(
