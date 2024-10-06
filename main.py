@@ -1,7 +1,5 @@
 from clearml import PipelineController, Task
 import config
-from dataset_utils import get_dataset_size
-
 
 def main():
     base_project_name = config.base_project_name  # "Test/Audio Transcription"
