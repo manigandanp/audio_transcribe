@@ -28,7 +28,6 @@ def register_base_task(project_name, task_name, script_path, task_type, params_d
         repo="https://github.com/manigandanp/audio_transcribe.git",
         branch="main",
         script=script_path,
-        packages=["clearml"],
     )
     task.set_parameters(params_dict)
     task.close()
@@ -48,7 +47,7 @@ if __name__ == "__main__":
         "General/hf_config_name": hf_config_name,
         "General/input_task_id": "",
     }
-    
+
     batch_controller_task_params = {
         "General/hf_dataset_name": hf_dataset_name,
         "General/hf_config_name": hf_config_name,
@@ -57,17 +56,15 @@ if __name__ == "__main__":
         "General/output_task_id": "",
         "General/queue_name": "",
     }
-    
+
     transcription_task_params = {
         "General/batch_index": 0,
         "General/batch_size": batch_size,
         "General/input_task_id": "",
         "General/output_task_id": "",
     }
-    
-    wait_for_batches_task_params = {
-        "General/controller_task_id": ""
-    }
+
+    wait_for_batches_task_params = {"General/controller_task_id": ""}
 
     upload_task_params = {
         "General/output_task_id": "",
@@ -90,7 +87,7 @@ if __name__ == "__main__":
         task_type=TaskTypes.data_processing,
         params_dict=batch_controller_task_params,
     )
-    
+
     register_base_task(
         project_name=base_project_template,
         task_name=config.transcribe_base_task_name,

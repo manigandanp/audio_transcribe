@@ -42,7 +42,7 @@ def batch_controller(
                 "General/output_task_id": output_artifacts_task_id,
             }
         )
-        task.set_packages("./requirements.txt")
+        # task.set_packages("./requirements.txt")
         Task.enqueue(
             task=task,
             queue_name=queue_name,
