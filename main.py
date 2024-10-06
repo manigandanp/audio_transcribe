@@ -41,7 +41,7 @@ def main():
         param_type="string",
     )
     pipe.add_parameter(name="is_private_dataset", default="True", param_type="bool")
-    
+
     # Dataset Loader Step
     pipe.add_step(
         name="download_dataset",
@@ -53,13 +53,15 @@ def main():
             "General/hf_config_name": "${pipeline.hf_config_name}",
             "General/input_task_id": input_artifacts_task.id,
         },
-        task_overrides={"script.requirements.pip": ["clearml", "datasets"]},
+        task_overrides={
+            "script.requirements.pip": ["clearml", "datasets", "soundfile", "librosa"]
+        },
     )
 
     pipe.add_step(
         name="transcription_batch_controller",
         base_task_project=project_template,
-        base_task_name=config.batch_controller_base_task_name,  
+        base_task_name=config.batch_controller_base_task_name,
         parents=["download_dataset"],
         execution_queue=cpu_queue,
         parameter_override={
@@ -70,7 +72,7 @@ def main():
             "General/hf_config_name": "${pipeline.hf_config_name}",
             "General/queue_name": gpu_queue,
         },
-        task_overrides={'script.requirements': {'pip': ['clearml']}}
+        task_overrides={"script.requirements": {"pip": ["clearml"]}},
     )
 
     pipe.add_step(
@@ -82,10 +84,9 @@ def main():
         parameter_override={
             "General/controller_task_id": "${transcription_batch_controller.id}",
         },
-        task_overrides={'script.requirements': {'pip': ['clearml']}}
+        task_overrides={"script.requirements": {"pip": ["clearml"]}},
     )
-    
-    
+
     pipe.add_step(
         name="upload_dataset",
         base_task_project=project_template,
