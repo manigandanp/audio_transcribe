@@ -140,9 +140,6 @@ class BatchProcessor:
             try:
                 success = self.input_task.delete_artifacts(
                     artifact_names=artifact_names_to_delete,
-                    raise_on_errors=False,
-                    delete_from_storage=True,
-                    silent_on_errors=False,
                 )
                 if success:
                     print(
