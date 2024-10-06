@@ -28,6 +28,7 @@ def register_base_task(project_name, task_name, script_path, task_type, params_d
         repo="https://github.com/manigandanp/audio_transcribe.git",
         branch="main",
         script=script_path,
+        packages=["clearml"],
     )
     task.set_parameters(params_dict)
     task.close()
