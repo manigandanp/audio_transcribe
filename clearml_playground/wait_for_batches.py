@@ -5,7 +5,7 @@ def wait_for_batches(controller_task_id):
     enqueued_task_ids = controller_task.artifacts['enqueued_task_ids'].get()
     
     for task_id in enqueued_task_ids:
-        Task.get_task(task_id=task_id).wait_for_status(Task.TaskStatusEnum.completed)
+        Task.get_task(task_id=task_id).wait_for_status()
 
 if __name__ == "__main__":    
     params = Task.current_task().get_parameters()
