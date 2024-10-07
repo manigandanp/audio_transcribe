@@ -5,6 +5,7 @@ from clearml import Task
 import numpy as np
 import soundfile as sf
 import csv
+from typing import List
 
 
 class TranscriptionPipeline:
@@ -23,21 +24,18 @@ class TranscriptionPipeline:
 
 class BatchProcessor:
     def __init__(
-        self, input_task_id: str, output_task_id: str, batch_index: int, batch_size: int
+        self, input_task_id: str, output_task_id: str, batch_index: int, controller_task_id: str
     ):
         self.WISHPER_TRANSCRIPTION_SAMPLING_RATE = 16000
         self.input_task = Task.get_task(task_id=input_task_id)
         self.output_task = Task.get_task(task_id=output_task_id)
         self.batch_index = batch_index
-        self.batch_size = batch_size
+        self.controller_task = Task.get_task(task_id=controller_task_id)
+        
         self.transcription_pipeline = TranscriptionPipeline()
 
     def process_batch(self):
-        artifacts = self.input_task.artifacts
-        all_keys = list(artifacts.keys())
-        start_idx = self.batch_index * self.batch_size
-        end_idx = min((self.batch_index + 1) * self.batch_size, len(all_keys))
-        batch = all_keys[start_idx:end_idx]
+        batch = self.controller_task.artifacts[str(batch_index)].get()
 
         transcriptions = []
         for audio_name in batch:
@@ -159,11 +157,11 @@ if __name__ == "__main__":
     input_task_id = task_parameters.get("input_task_id")
     output_task_id = task_parameters.get("output_task_id")
     batch_index = int(task_parameters.get("batch_index"))
-    batch_size = int(task_parameters.get("batch_size"))
+    controller_task_id = task_parameters.get("controller_task_id")
     print("Printing task parameters...")
     print(task_parameters)
 
     batch_processor = BatchProcessor(
-        input_task_id, output_task_id, batch_index, batch_size
+        input_task_id, output_task_id, batch_index, controller_task_id
     )
     batch_processor.process_batch()

@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     transcription_task_params = {
         "General/batch_index": 0,
-        "General/batch_size": batch_size,
+        "General/controller_task_id": "",
         "General/input_task_id": "",
         "General/output_task_id": "",
     }

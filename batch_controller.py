@@ -24,20 +24,29 @@ def batch_controller(
     transcription_tasks_project = Task.get_project_id(
         project_name=config.transcription_tasks_project_name
     )
-
+    current_task = Task.current_task()
+    
     enqueued_task_ids = []
-
-    for i in range(total_batches):
+    input_task = Task.get_task(task_id=input_task_id)
+    for batch_index in range(total_batches):
+        artifacts = input_task.artifacts
+        all_keys = list(artifacts.keys())
+        start_idx = batch_index * batch_size
+        end_idx = min((batch_index + 1) * batch_size, len(all_keys))
+        batch = all_keys[start_idx:end_idx]
+        
+        current_task.upload_artifact(str(batch_index), batch)
+        
         task = Task.clone(
             transcription_base_task,
             parent=Task.current_task(),
             project=transcription_tasks_project,
-            name=f"transcribe_batch_{i}",
+            name=f"transcribe_batch_{batch_index}",
         )
         task.set_parameters(
             {
-                "General/batch_index": i,
-                "General/batch_size": batch_size,
+                "General/batch_index": batch_index, 
+                "General/controller_task_id": current_task.id,
                 "General/input_task_id": input_task_id,
                 "General/output_task_id": output_task_id,
             }
@@ -54,7 +63,7 @@ def batch_controller(
         title="Batch Info", series="Total Batches", value=total_batches, iteration=0
     )
 
-    current_task = Task.current_task()
+    
     current_task.upload_artifact("enqueued_task_ids", enqueued_task_ids)
 
 
