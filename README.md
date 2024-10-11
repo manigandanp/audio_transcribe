@@ -1,4 +1,4 @@
-# Project README: Audio Transcription using Faster-Whisper (Large-v3)
+# Audio Transcription using Faster-Whisper (Large-v3)
 
 ## Project Overview
 This project is designed to transcribe audio files using the Faster-Whisper model (large-v3). The default assumption is that the audio files are in Tamil. The project uses **ClearML** for the orchestration of the entire flow.
