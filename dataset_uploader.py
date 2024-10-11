@@ -3,6 +3,7 @@ import pandas as pd
 from datasets import load_dataset
 import os
 import shutil
+from dataset_utils import delete_clearml_artifcats
 
 
 class DatasetUploader:
@@ -13,7 +14,7 @@ class DatasetUploader:
         hf_config_name,
         is_private_dataset,
     ):
-        self.output_artifacts_task = Task.get_task(task_id=output_artifacts_task_id)
+        self.output_artifacts_task:Task = Task.get_task(task_id=output_artifacts_task_id)
         self.hf_output_dataset_name = hf_output_dataset_name
         self.output_dir = "final_output"
         os.makedirs(self.output_dir, exist_ok=True)
@@ -26,9 +27,10 @@ class DatasetUploader:
 
     def upload(self):
         all_metadata = []
-        print("Uploading artifacts")
-        print(self.output_artifacts_task.artifacts)
-        for artifact_name, artifact in self.output_artifacts_task.artifacts.items():
+        all_artifacts = self.output_artifacts_task.artifacts
+        print(f"Uploading artifacts... \n {len(all_artifacts.keys())}")
+        print("All artifcat names - ", all_artifacts.keys())
+        for artifact_name, artifact in all_artifacts.items():
             if artifact_name.endswith("_metadata"):
                 df = pd.read_csv(artifact.get_local_copy())
                 all_metadata.append(df)
@@ -48,10 +50,8 @@ class DatasetUploader:
 
         # Create and upload Hugging Face dataset
         self.create_and_upload_hf_dataset(merged_metadata)
-
-        # # Upload artifacts to ClearML
-        # self.task.upload_artifact("merged_metadata", merged_metadata_path)
-        # self.task.upload_artifact("audio_chunks", self.wavs_dir)
+        delete_clearml_artifcats(self.output_artifacts_task, all_artifacts.keys())
+        
 
     def move_wav_files(self, source_folder):
         for root, _, files in os.walk(source_folder):
