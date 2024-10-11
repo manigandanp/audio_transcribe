@@ -37,7 +37,7 @@ def batch_controller(
         
         current_task.upload_artifact(str(batch_index), batch)
         
-        task = Task.clone(
+        task: Task = Task.clone(
             transcription_base_task,
             parent=Task.current_task(),
             project=transcription_tasks_project,
@@ -56,7 +56,7 @@ def batch_controller(
             task=task,
             queue_name=queue_name,
         )
-
+        print(f"Enqueued {task.name} in {task.project} tasks - {task.id}")
         enqueued_task_ids.append(task.id)
 
     Logger.current_logger().report_scalar(

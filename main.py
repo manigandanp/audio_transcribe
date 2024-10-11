@@ -6,15 +6,30 @@ def main():
     cpu_queue = "cpu_worker"
     gpu_queue = "gpu_worker"
     project_template = config.task_templates_project_name
-    input_artifacts_task = Task.get_task(
+    input_artifacts_base_task = Task.get_task(
         project_name=project_template,
         task_name=config.input_artifacts_task_name,
         allow_archived=False,
     )
-    output_artifacts_task = Task.get_task(
+    
+    input_artifacts_task = Task.clone(
+        input_artifacts_base_task,
+        project=config.transcription_tasks_project_name,
+        parent=Task.current_task(),
+        name=config.input_artifacts_task_name,
+    )
+    
+    output_artifacts_base_task = Task.get_task(
         project_name=project_template,
         task_name=config.output_artifacts_task_name,
         allow_archived=False,
+    )
+    
+    output_artifacts_task = Task.clone(
+        output_artifacts_base_task,
+        project=config.transcription_tasks_project_name,
+        parent=Task.current_task(),
+        name=config.output_artifacts_task_name,
     )
 
     pipe = PipelineController(

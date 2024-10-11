@@ -6,6 +6,7 @@ import numpy as np
 import soundfile as sf
 import csv
 from typing import List
+from dataset_utils import delete_clearml_artifcats
 
 
 class TranscriptionPipeline:
@@ -135,18 +136,7 @@ class BatchProcessor:
         ]
 
         if artifact_names_to_delete:
-            try:
-                success = self.input_task.delete_artifacts(
-                    artifact_names=artifact_names_to_delete,
-                )
-                if success:
-                    print(
-                        f"Successfully deleted {len(artifact_names_to_delete)} original audio artifacts."
-                    )
-                else:
-                    print("Failed to delete some or all artifacts.")
-            except Exception as e:
-                print(f"An error occurred while deleting artifacts: {e}")
+            delete_clearml_artifcats(self.input_task, artifact_names_to_delete)
         else:
             print("No .wav artifacts found to delete.")
 

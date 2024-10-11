@@ -2,3 +2,4 @@ clearml.env
 .venv
 __pycache__
 final_output
+chrome_sessions

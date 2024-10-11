@@ -9,6 +9,20 @@ def get_dataset_size(dataset_name, config_name=None, split='train'):
     return split_info.num_examples
 
 
+def delete_clearml_artifcats(task, artifact_names_to_delete):
+    try:
+        success = task.delete_artifacts(
+            artifact_names=artifact_names_to_delete,
+        )
+        if success:
+            print(
+                f"Successfully deleted {len(artifact_names_to_delete)} original audio artifacts."
+            )
+        else:
+            print("Failed to delete some or all artifacts.")
+    except Exception as e:
+        print(f"An error occurred while deleting artifacts: {e}")
+
 if __name__ == '__main__':
   try:
       dataset_name = "mastermani305/ps-raw"
