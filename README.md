@@ -11,7 +11,7 @@ This project is designed to transcribe audio files using the Faster-Whisper mode
    
 2. **Batch Controller Task**: 
    - Retrieves metadata about the Huggingface dataset.
-   - Dynamically creates transcription tasks to process the audio files. These transcription tasks are queued into `gpu_workers`.
+   - Dynamically creates transcription tasks to process the audio files. These transcription tasks are queued into `gpu_worker`.
 
 3. **Uploader Task**:
    - After all transcription tasks are complete, it merges the transcribed audio chunks and their metadata CSVs.
