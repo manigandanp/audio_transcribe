@@ -1,4 +1,4 @@
-base_project_name="Test/Audio Transcription"
+base_project_name="Production/Audio Transcription"
 task_templates_project_name=f"{base_project_name}/template"
 transcription_tasks_project_name=f"{base_project_name}/Transcription Tasks"
 download_dataset_base_task_name="download_dataset_base_task"
